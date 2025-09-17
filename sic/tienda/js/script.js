@@ -27,7 +27,7 @@ window.actualizarNavbarUsuario = () => {
           window.usuario = null;
           window.actualizarNavbarUsuario();
           alert("Sesión cerrada correctamente.");
-          window.location.href = "../index.html";
+          window.location.href = "./index.html";
         });
       }
     });
