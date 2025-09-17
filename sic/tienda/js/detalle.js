@@ -169,25 +169,39 @@ window.initFormReseña = () => {
     const nombre = window.usuario.nombre;
     const email = window.usuario.email; // ← Se guarda el email
     const texto = document.getElementById("reseñaTexto")?.value.trim();
-    if (!texto) { alert("Completa tu reseña."); return; }
+    if (!texto) { 
+      alert("Completa tu reseña."); 
+      return; 
+    }
 
     const nueva = { nombre, email, texto, rating, fecha: new Date() }; // ← Guardar email
-    window.reseñas.push(nueva);
+
+    // === Guardar en localStorage con el id del producto ===
+    const todasReseñas = JSON.parse(localStorage.getItem("reseñas")) || {};
+
+    if (!todasReseñas[window.productoDetalle.id]) {
+      todasReseñas[window.productoDetalle.id] = [];
+    }
+
+    // Agregar la nueva reseña
+    todasReseñas[window.productoDetalle.id].push(nueva);
 
     // === Actualizar nombre en todas las reseñas existentes ===
-  // Actualizar nombre en todas las reseñas del usuario
-  const todasReseñas = JSON.parse(localStorage.getItem("reseñas")) || {};
-  Object.values(todasReseñas).forEach(reseñasArray => {
-    reseñasArray.forEach(r => {
-      if (r.email === usuario.email) r.nombre = usuario.nombre;
+    Object.values(todasReseñas).forEach(reseñasArray => {
+      reseñasArray.forEach(r => {
+        if (r.email === window.usuario.email) r.nombre = window.usuario.nombre;
+      });
     });
-  });
-  localStorage.setItem("reseñas", JSON.stringify(todasReseñas));
 
-  // Actualizar reseñas en detalle de producto si está abierto
-  if (window.productoDetalle) {
-    window.reseñas = todasReseñas[window.productoDetalle.id] || [];
-    window.renderReseñas(); // refresca la vista
-  }
-});
+    localStorage.setItem("reseñas", JSON.stringify(todasReseñas));
+
+    // Actualizar reseñas en detalle de producto si está abierto
+    if (window.productoDetalle) {
+      window.reseñas = todasReseñas[window.productoDetalle.id] || [];
+      window.renderReseñas(); // refresca la vista
+    }
+
+    // Limpiar campo de texto
+    document.getElementById("reseñaTexto").value = "";
+  });
 };
